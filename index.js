@@ -56,6 +56,56 @@ if (NO_COMMAND) {
 }
 
 /**
+ * Creates empty dump file at dumpPath.
+ *
+ * @api private
+ */
+function makeDump() {
+  fs.writeFile(dumpPath, '[]', function(err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+}
+
+/**
+ * Self-calling function to check if dump file present.
+ * If not, call makeConfig.
+ *
+ * @api private
+ */
+(function startupCheck() {
+  // Add more checks here
+  if (!fs.existsSync(dumpPath)) {
+    makeDump();
+  }
+})();
+
+/**
+ * Gets dump file's data.
+ *
+ * @return {Object} data
+ * @api private
+ */
+function getDump() {
+  return JSON.parse(fs.readFileSync(dumpPath));
+}
+
+/**
+ * Updates dump file with new data.
+ *
+ * @param {Object} data
+ * @api private
+ */
+function updateDump(data) {
+  fs.writeFile(dumpPath, JSON.stringify(data), function(err){
+    if (err) {
+      console.log(err);
+    }
+  });
+}
+
+/**
  * Add item to list aka Desktop.
  *
  * @api private
