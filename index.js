@@ -7,10 +7,18 @@ var fs = require('fs');
 var path = require('path');
 var program = require('commander');
 var utils = require('./lib/utils');
+var exports = module.exports;
 
 // Normalized paths
 var dumpPath = path.join(utils.getUserHome(), '.toodo');
 var desktopPath = path.join(utils.getUserHome(), 'Desktop');
+
+/**
+ * Module exports.
+ */
+exports.dumpPath = dumpPath;
+exports.desktopPath = desktopPath;
+var dump = require('./lib/dump');
 
 /**
  * Self-calling function to check if dump file present.
@@ -21,7 +29,7 @@ var desktopPath = path.join(utils.getUserHome(), 'Desktop');
 (function startupCheck() {
   // Add more checks here
   if (!fs.existsSync(dumpPath)) {
-    makeDump();
+    dump.make();
   }
 })();
 
@@ -59,46 +67,10 @@ if (NO_COMMAND) {
   toodoRead();
 }
 
-/**
- * Creates empty dump file at dumpPath.
- *
- * @api private
- */
-function makeDump() {
-  fs.writeFile(dumpPath, '[]', function(err) {
-    if (err) {
-      console.log(err);
-    }
-  });
-}
-
-/**
- * Gets dump file's data.
- *
- * @return {Object} data
- * @api private
- */
-function getDump() {
-  return JSON.parse(fs.readFileSync(dumpPath));
-}
-
-/**
- * Updates dump file with new data.
- *
- * @param {Object} data
- * @api private
- */
-function setDump(data) {
-  fs.writeFile(dumpPath, JSON.stringify(data), function(err){
-    if (err) {
-      console.log(err);
-    }
-  });
-}
 
 function toodoRead() {
   // Read from dump file .toodo
-  var dumpData = getDump();
+  var dumpData = dump.get();
   console.log(dumpData);
 }
 
@@ -109,13 +81,13 @@ function toodoRead() {
  */
 function toodoAdd(item) {
   // Update dump file .toodo
-  var dumpData = getDump();
+  var dumpData = dump.get();
   var itemData = {
     name: item,
     created: utils.getDateString()
   };
   dumpData.push(itemData);
-  setDump(dumpData);
+  dump.set(dumpData);
 
   // Write to Desktop
   var itemPath = path.join(desktopPath, item);
@@ -135,6 +107,7 @@ function toodoAdd(item) {
  * @api private
  */
 function toodoRemove(item) {
+  // Delete file at Desktop
   var itemPath = path.join(desktopPath, item);
   fs.unlink(itemPath, function(err) {
     if (err) {
