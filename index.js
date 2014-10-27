@@ -6,21 +6,11 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
-
-/**
- * Standard way of getting user's home directory.
- *
- * @return {String} home directory
- * @api private
- */
-function getUserHome() {
-  return process.env[(process.platform === 'win32') ?
-    'USERPROFILE' : 'HOME'];
-}
+var utils = require('.lib/utils');
 
 // Normalized paths
-var dumpPath = path.join(getUserHome(), '.toodo');
-var desktopPath = path.join(getUserHome(), 'Desktop');
+var dumpPath = path.join(utils.getUserHome(), '.toodo');
+var desktopPath = path.join(utils.getUserHome(), 'Desktop');
 
 /**
  * Self-calling function to check if dump file present.
@@ -57,6 +47,7 @@ program
  */
 program.parse(process.argv);
 
+// MUST be behind program.parse
 var NO_COMMAND = program.args.length === 0;
 
 /**
@@ -121,7 +112,7 @@ function toodoAdd(item) {
   var dumpData = getDump();
   var itemData = {
     name: item,
-    created: new Date()
+    created: utils.getDateString()
   };
   dumpData.push(itemData);
   setDump(dumpData);
