@@ -19,8 +19,21 @@ function getUserHome() {
 }
 
 // Normalized paths
-var dumpPath = path.join(getUserHome(), 'desktopPath.toodo');
+var dumpPath = path.join(getUserHome(), '.toodo');
 var desktopPath = path.join(getUserHome(), 'Desktop');
+
+/**
+ * Self-calling function to check if dump file present.
+ * If not, call makeConfig.
+ *
+ * @api private
+ */
+(function startupCheck() {
+  // Add more checks here
+  if (!fs.existsSync(dumpPath)) {
+    makeDump();
+  }
+})();
 
 /**
  * Program options and metadata.
@@ -46,13 +59,13 @@ program.parse(process.argv);
 
 var NO_COMMAND = program.args.length === 0;
 
+/**
+ * When toodo is called without any command.
+ *
+ * @prints toodo list
+ */
 if (NO_COMMAND) {
-  var files = fs.readdirSync(desktopPath);
-  function isFile(file) {
-    var stats = fs.statSync(path.join(desktopPath, file));
-    return stats.isFile();
-  }
-  files = files.filter(isFile);
+  toodoRead();
 }
 
 /**
@@ -67,19 +80,6 @@ function makeDump() {
     }
   });
 }
-
-/**
- * Self-calling function to check if dump file present.
- * If not, call makeConfig.
- *
- * @api private
- */
-(function startupCheck() {
-  // Add more checks here
-  if (!fs.existsSync(dumpPath)) {
-    makeDump();
-  }
-})();
 
 /**
  * Gets dump file's data.
@@ -97,12 +97,18 @@ function getDump() {
  * @param {Object} data
  * @api private
  */
-function updateDump(data) {
+function setDump(data) {
   fs.writeFile(dumpPath, JSON.stringify(data), function(err){
     if (err) {
       console.log(err);
     }
   });
+}
+
+function toodoRead() {
+  // Read from dump file .toodo
+  var dumpData = getDump();
+  console.log(dumpData);
 }
 
 /**
@@ -111,13 +117,23 @@ function updateDump(data) {
  * @api private
  */
 function toodoAdd(item) {
+  // Update dump file .toodo
+  var dumpData = getDump();
+  var itemData = {
+    name: item,
+    created: new Date()
+  };
+  dumpData.push(itemData);
+  setDump(dumpData);
+
+  // Write to Desktop
   var itemPath = path.join(desktopPath, item);
   fs.writeFile(itemPath, '', function(err) {
     if (err) {
       console.log(err);
     }
     else if (program.verbose) {
-      console.log("'%s' added.", item);
+      console.log("'%s' added to toodo.", item);
     }
   });
 }
@@ -138,4 +154,3 @@ function toodoRemove(item) {
     }
   });
 }
-
