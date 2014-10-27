@@ -1,0 +1,15 @@
+{
+  "name": "toodo",
+  "version": "0.0.0",
+  "description": "A minimalistic todo list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "'todo",
+    "list'"
+  ],
+  "author": "",
+  "license": "MIT"
+}
