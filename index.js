@@ -1,7 +1,11 @@
-#! /c/Program\ Files/nodejs/node
+#! /c/nodejs/node
 
+/**
+ * Module dependencies.
+ */
 var fs = require('fs');
 var path = require('path');
+var program = require('commander');
 
 /**
  * Standard way of getting user's home directory.
@@ -14,69 +18,70 @@ function getUserHome() {
     'USERPROFILE' : 'HOME'];
 }
 
-// Normalized dump path
+// Normalized paths
 var dumpPath = path.join(getUserHome(), '.toodo');
+var desktopPath = path.join(getUserHome(), 'Desktop');
 
 /**
- * Creates empty dump file at dumpPath.
+ * Program options and metadata.
+ */
+program
+  .version('0.0.1')
+  .option('-v, --verbose', 'Provides more information.')
+  .option('-i, --interactive', 'Interactive prompts for inserting more details.');
+
+/**
+ * Program commands.
+ */
+program
+  .command('add <item>')
+  .action(function (item) {
+    toodoAdd(item);
+  });
+
+/**
+ * Finally parsing the argv.
+ */
+program.parse(process.argv);
+
+var NO_COMMAND = program.args.length === 0;
+
+if (NO_COMMAND) {
+  // something here
+}
+
+
+/**
+ * Add item to list aka Desktop.
  *
  * @api private
  */
-function makeDump() {
-  fs.writeFile(dumpPath, '{}', function(err) {
+function toodoAdd(item) {
+  var itemPath = path.join(desktopPath, item);
+  fs.writeFile(itemPath, '', function(err) {
     if (err) {
       console.log(err);
+    }
+    else if (program.verbose) {
+      console.log("'%s' added.", item);
     }
   });
 }
 
 /**
- * Self-calling function to check if dump file present.
- * If not, call makeConfig.
+ * Remove item from list aka Desktop.
  *
  * @api private
  */
-(function startupCheck() {
-  // Add more checks here
-  if (!fs.existsSync(dumpPath)) {
-    makeDump();
-  }
-})();
-
-/**
- * Gets dump file's data.
- *
- * @return {Object} data
- * @api private
- */
-function getDump() {
-  return JSON.parse(fs.readFileSync(dumpPath));
-}
-
-/**
- * Updates dump file with new data.
- *
- * @param {Object} data
- * @api private
- */
-function updateDump(data) {
-  fs.writeFile(dumpPath, JSON.stringify(data), function(err){
+function toodoRemove(item) {
+  var itemPath = path.join(desktopPath, item);
+  fs.unlink(itemPath, function(err) {
     if (err) {
       console.log(err);
+    }
+    else if (program.verbose) {
+      console.log("'%s' removed.", item);
     }
   });
 }
 
-/**test
- * Initiates directory to contain toodos.
- *
- * @param {String} [dir]
- * @api public
- */
-function init(dir) {
-  if (typeof dir === undefined) {
-    dir = process.cwd();
-  }
-  var data = getDump();
-  data.dirs = [dir];
-}
