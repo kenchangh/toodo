@@ -19,7 +19,7 @@ function getUserHome() {
 }
 
 // Normalized paths
-var dumpPath = path.join(getUserHome(), '.toodo');
+var dumpPath = path.join(getUserHome(), 'desktopPath.toodo');
 var desktopPath = path.join(getUserHome(), 'Desktop');
 
 /**
@@ -47,9 +47,13 @@ program.parse(process.argv);
 var NO_COMMAND = program.args.length === 0;
 
 if (NO_COMMAND) {
-  // something here
+  var files = fs.readdirSync(desktopPath);
+  function isFile(file) {
+    var stats = fs.statSync(path.join(desktopPath, file));
+    return stats.isFile();
+  }
+  files = files.filter(isFile);
 }
-
 
 /**
  * Add item to list aka Desktop.
