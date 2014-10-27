@@ -18,12 +18,12 @@ function getUserHome() {
 var dumpPath = path.join(getUserHome(), '.toodo');
 
 /**
- * Creates empty config file at configPath.
+ * Creates empty dump file at dumpPath.
  *
  * @api private
  */
 function makeDump() {
-  fs.writeFile(configPath, '', function(err) {
+  fs.writeFile(dumpPath, '{}', function(err) {
     if (err) {
       console.log(err);
     }
@@ -31,14 +31,14 @@ function makeDump() {
 }
 
 /**
- * Self-calling function to check if config file present.
+ * Self-calling function to check if dump file present.
  * If not, call makeConfig.
  *
  * @api private
  */
 (function startupCheck() {
   // Add more checks here
-  if (!fs.existsSync(configPath)) {
+  if (!fs.existsSync(dumpPath)) {
     makeDump();
   }
 })();
@@ -67,14 +67,16 @@ function updateDump(data) {
   });
 }
 
-/**
+/**test
  * Initiates directory to contain toodos.
  *
  * @param {String} [dir]
  * @api public
  */
-function init() {
+function init(dir) {
+  if (typeof dir === undefined) {
+    dir = process.cwd();
+  }
   var data = getDump();
+  data.dirs = [dir];
 }
-
-
