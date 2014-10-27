@@ -6,7 +6,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
-var utils = require('.lib/utils');
+var utils = require('./lib/utils');
 
 // Normalized paths
 var dumpPath = path.join(utils.getUserHome(), '.toodo');
