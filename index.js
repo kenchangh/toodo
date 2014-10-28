@@ -45,6 +45,18 @@ program
     toodo.add(item, function() {
       if (program.verbose) {
         console.log("'%s' added to toodo.", item);
+        toodo.read();
+      }
+    });
+  });
+
+program
+  .command('remove <itemNumber>')
+  .action(function (itemNumber) {
+    toodo.remove(itemNumber, function(itemName) {
+      if (program.verbose) {
+        console.log("'%s' removed from toodo.", itemName);
+        toodo.read();
       }
     });
   });
