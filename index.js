@@ -29,19 +29,6 @@ var dump = require('./lib/dump');
 var toodo = require('./lib/toodo');
 
 /**
- * Self-calling function to check if dump file present.
- * If not, call makeConfig.
- *
- * @api private
- */
-(function startupCheck() {
-  // Add more checks here
-  if (!fs.existsSync(DUMP_PATH)) {
-    dump.make();
-  }
-})();
-
-/**
  * Program options and metadata.
  */
 program
@@ -55,7 +42,11 @@ program
 program
   .command('add <item>')
   .action(function (item) {
-    toodo.add(item);
+    toodo.add(item, function() {
+      if (program.verbose) {
+        console.log("'%s' added to toodo.", item);
+      }
+    });
   });
 
 /**
@@ -63,6 +54,24 @@ program
  */
 program.parse(process.argv);
 
+/**
+ * Self-calling function to check if dump file present.
+ * If not, call makeConfig.
+ *
+ * @api private
+ */
+(function startupCheck() {
+  // Add more checks here
+  if (!fs.existsSync(DUMP_PATH)) {
+    dump.make();
+    if (program.verbose) {
+      console.log('.toodo created in home directory.');
+    }
+  }
+  else if (program.verbose) {
+    console.log('.toodo already present, reading toodo...');
+  }
+})();
 
 // MUST be behind program.parse
 var NO_COMMAND = program.args.length === 0;
