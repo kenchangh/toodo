@@ -61,6 +61,17 @@ program
     });
   });
 
+program
+  .command('finish <itemNumber>')
+  .action(function (itemNumber) {
+    toodo.finish(itemNumber, function(itemName) {
+      if (program.verbose) {
+        console.log("Finished '%s'!", itemName);
+        toodo.read();
+      }
+    });
+  });
+
 /**
  * Finally parsing the argv. No extending program after this.
  */
