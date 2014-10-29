@@ -8,6 +8,7 @@
     "list",
     "command-line"
   ],
+  "preferGlobal": true,
   "author": {
     "name": "Maverick Chan",
     "email": "guanhao3797@gmail.com"

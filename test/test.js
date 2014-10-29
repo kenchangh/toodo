@@ -12,14 +12,6 @@ var toodo = require('../lib/toodo');
 var DESKTOP_PATH = index.DESKTOP_PATH;
 var DUMP_PATH = index.DUMP_PATH;
 
-// Test for making and deleting dump
-if (dump.exists) {
-  dump.delete();
-  (dump.exists).should.be.false;
-}
-dump.make();
-dump.exists.should.be.true;
-
 // Basic tests for dump
 var dumpData = dump.get();
 dumpData.should.be.an.Array;
