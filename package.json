@@ -5,15 +5,26 @@
   "main": "index.js",
   "keywords": [
     "todo",
-    "list"
+    "list",
+    "command-line"
   ],
-  "author": "",
+  "author": {
+    "name": "Maverick Chan",
+    "email": "guanhao3797@gmail.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/mavenave/toodo.git"
   },
+  "homepage": "https://github.com/mavenave/toodo",
+  "bugs": {
+    "url": "https://github.com/mavenave/toodo/issues"
+  },
   "devDependencies": {
     "commander": "^2.5.0"
+  },
+  "bin": {
+    "toodo": "index.js"
   }
 }
