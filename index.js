@@ -33,16 +33,17 @@ var toodo = require('./lib/toodo');
  */
 program
   .version('0.0.1')
-  .option('-v, --verbose', 'Provides more information.')
-  .option('-i, --interactive', 'Interactive prompts for inserting more details.');
+  .option('-v, --verbose', 'provides more information')
+  .option('-i, --interactive', 'interactive prompts for inserting more details');
 
 /**
  * Program commands.
  */
 program
   .command('add <item>')
+  .description('adds new item to toodo list')
   .action(function (item) {
-    toodo.add(item, function() {
+    toodo.add(item, function () {
       if (program.verbose) {
         console.log("'%s' added to toodo.", item);
         toodo.read();
@@ -51,9 +52,10 @@ program
   });
 
 program
-  .command('remove <itemNumber>')
+  .command('remove <itemNumber>')//, 'Cross that off your list.')
+  .description('check that thing off the list')
   .action(function (itemNumber) {
-    toodo.remove(itemNumber, function(itemName) {
+    toodo.remove(itemNumber, function (itemName) {
       if (program.verbose) {
         console.log("'%s' removed from toodo.", itemName);
         toodo.read();
@@ -65,6 +67,9 @@ program
  * Finally parsing the argv. No extending program after this.
  */
 program.parse(process.argv);
+
+// MUST be behind program.parse
+var NO_COMMAND = program.args.length === 0;
 
 /**
  * Self-calling function to check if dump file present.
@@ -84,9 +89,6 @@ program.parse(process.argv);
     console.log('.toodo already present, reading toodo...');
   }
 })();
-
-// MUST be behind program.parse
-var NO_COMMAND = program.args.length === 0;
 
 /**
  * When toodo is called without any command.
