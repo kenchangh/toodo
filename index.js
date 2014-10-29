@@ -79,7 +79,7 @@ var NO_COMMAND = program.args.length === 0;
  */
 (function startupCheck() {
   // Add more checks here
-  if (!fs.existsSync(DUMP_PATH)) {
+  if (!dump.exists) {
     dump.make();
     if (program.verbose) {
       console.log('.toodo created in home directory.');
